@@ -32,13 +32,36 @@ async def start(message: Message):
         "/nimi <ник> - посмотреть описание игрока"
     )
 
+ADMIN_ID = 123456789  # замените на свой Telegram ID
+rules_text = """📜 Правила сервера
+
+1. Не использовать читы.
+2. Не гриферить.
+3. Не оскорблять игроков.
+4. Не использовать баги.
+5. Уважать администрацию.
+"""
+
+@dp.message(Command("setrules"))
+async def setrules(message: Message):
+    global rules_text
+    if message.from_user.id != ADMIN_ID:
+        await message.answer("❌ У вас нет прав.")
+        return
+    args = message.text.split(maxsplit=1)
+    if len(args) < 2:
+        await message.answer("Использование:\n/setrules Новый текст правил")
+        return
+    rules_text = args[1]
+    await message.answer("✅ Правила обновлены!")
+
 @dp.message(Command("help"))
 async def help_cmd(message: Message):
     await message.answer("📚 Команды:\n/start\n/help\n/rules\n/players\n/setnick <ник>\n/setbio <описание>\n/nimi <ник>")
 
 @dp.message(Command("rules"))
 async def rules(message: Message):
-    await message.answer("📜 Правила сервера:\n1. Не использовать читы.\n2. Не гриферить.\n3. Не оскорблять игроков.\n4. Не использовать баги.\n5. Уважать администрацию.")
+    await message.answer(rules_text)
 
 @dp.message(Command("players"))
 async def players(message: Message):
