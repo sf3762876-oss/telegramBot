@@ -32,6 +32,23 @@ async def start(message: Message):
         "/nimi <ник> - посмотреть описание игрока"
     )
 
+@dp.message(Command("help"))
+async def help_cmd(message: Message):
+    await message.answer("📚 Команды:\n/start\n/help\n/rules\n/players\n/setnick <ник>\n/setbio <описание>\n/nimi <ник>")
+
+@dp.message(Command("rules"))
+async def rules(message: Message):
+    await message.answer("📜 Правила сервера:\n1. Не использовать читы.\n2. Не гриферить.\n3. Не оскорблять игроков.\n4. Не использовать баги.\n5. Уважать администрацию.")
+
+@dp.message(Command("players"))
+async def players(message: Message):
+    cur.execute("SELECT nickname FROM players ORDER BY nickname")
+    rows=cur.fetchall()
+    if not rows:
+        await message.answer("❌ Пока нет зарегистрированных игроков.")
+        return
+    await message.answer("👥 Игроки:\n"+"\n".join(f"{i+1}. {r[0]}" for i,r in enumerate(rows)))
+
 @dp.message(Command("setnick"))
 async def setnick(message: Message):
     args = message.text.split(maxsplit=1)
@@ -113,4 +130,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
